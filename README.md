@@ -21,13 +21,16 @@ A full-stack e-commerce application built using the MERN stack — allowing user
     git clone https://github.com/pramodrawat01/E-bajar.git
 
 2. Navigate to the project folder
+    ```bash
     cd E-bajar
 
 3. Install dependencies for both frontend and backend
+    ```bash
     cd backend && npm install
     cd ../frontend && npm install
 
 4. Create a .env file in the backend with your credentials
+    ```bash
     mongodb_uri=your_mongodb_uri
     secret_key=your_secret_key
     admin_username=admin-username
@@ -36,4 +39,5 @@ A full-stack e-commerce application built using the MERN stack — allowing user
     and cloudinary setup
 
 5. Run the project
+    ```bash
     npm run dev
