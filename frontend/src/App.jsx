@@ -1,0 +1,37 @@
+import React from "react";
+import { Route, Routes } from "react-router-dom";
+import './App.css'
+import Navbar from './components/Navbar.jsx'
+
+import Profile from './components/Profile.jsx'
+import Shop from './components/Shop.jsx'
+import AdminPanel from "./components/AdminPanel";
+import ContextProvider from "./Context/contextProvider.jsx";
+import ShopCategory from "./components/ShopCategory.jsx";
+import Cart from "./components/Cart.jsx";
+import Orders from "./components/Orders.jsx";
+
+
+
+
+export default function App(){
+    return (
+        <>
+        <Navbar/>
+             <ContextProvider>
+        <Routes>
+            <Route path="/" element={<Shop/>}/>
+         
+            <Route path="/Shop" element={<Shop/>}/>
+            <Route path="/profile" element={<Profile/>}/>
+            <Route path="/admin" element={<AdminPanel/>}/>
+       <Route path="/cart" element={<Cart/>}/>
+  <Route path="/orders" element={<Orders/>}/>
+      <Route path="/shop/:category" element={<ShopCategory/>}/>
+           
+        </Routes>
+         </ContextProvider>
+        </>
+    )
+
+}
