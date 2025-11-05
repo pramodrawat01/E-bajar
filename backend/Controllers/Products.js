@@ -48,39 +48,96 @@ export async function addProduct(req, res) {
   }
 }
 
-// Update product
+// // Update product
+// export async function updateProduct(req, res) {
+//   try {
+//     const { id } = req.params;
+//     const updatedData = req.body;
+
+//     const existingProduct = await products.findById(id);
+//     // find puri collection , {id:user.
+//     // _}, findbyid 
+//     if (!existingProduct) return res.status(404).json({ message: "Product not found" });
+
+//     if (updatedData.productCount != null) {
+//       const totalInCarts = await Cart.aggregate([
+//         { $unwind: "$products" },
+//         { $match: { "products.item": existingProduct._id } },
+//         { $group: { _id: null, totalQty: { $sum: "$products.qty" } } }
+//         // grp  
+
+        
+
+
+//       ]);
+//       const minCount = totalInCarts[0]?.totalQty || 0;
+
+//       if (updatedData.productCount < minCount) {
+//         return res.status(400).json({ 
+//           error: `Cannot reduce stock below ${minCount} (already in users' carts)` 
+//         });
+//       }
+//     }
+
+//     if (req.files && req.files.length > 0) {
+//       let imageUrl = [];
+//       for (const file of req.files) {
+//         const result = await cloudinary.uploader.upload(file.path, { folder: "uploads" });
+//         imageUrl.push(result.secure_url);
+//         fs.unlinkSync(file.path);
+//       }
+//       updatedData.productImage = imageUrl;
+//     }
+
+//     const updatedProduct = await products.findByIdAndUpdate(
+//       id,
+//       updatedData,
+//       { new: true }
+//     );
+
+//     res.status(200).json(updatedProduct);
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ error: "Failed to update product" });
+//   }
+// }
+
 export async function updateProduct(req, res) {
   try {
     const { id } = req.params;
     const updatedData = req.body;
 
+    // ✅ Find the product first
     const existingProduct = await products.findById(id);
-    // find puri collection , {id:user.
-    // _}, findbyid 
-    if (!existingProduct) return res.status(404).json({ message: "Product not found" });
+    if (!existingProduct) {
+      return res.status(404).json({ message: "Product not found" });
+    }
 
+    // ✅ Convert numbers properly
+    if (updatedData.productPrice) {
+      updatedData.productPrice = Number(updatedData.productPrice);
+    }
     if (updatedData.productCount != null) {
+      updatedData.productCount = Number(updatedData.productCount);
+
+      // prevent lowering count below items already in carts
       const totalInCarts = await Cart.aggregate([
         { $unwind: "$products" },
         { $match: { "products.item": existingProduct._id } },
-        { $group: { _id: null, totalQty: { $sum: "$products.qty" } } }
-        // grp  
-
-        
-
-
+        { $group: { _id: null, totalQty: { $sum: "$products.qty" } } },
       ]);
-      const minCount = totalInCarts[0]?.totalQty || 0;
 
+      const minCount = totalInCarts[0]?.totalQty || 0;
       if (updatedData.productCount < minCount) {
-        return res.status(400).json({ 
-          error: `Cannot reduce stock below ${minCount} (already in users' carts)` 
+        return res.status(400).json({
+          error: `Cannot reduce stock below ${minCount} (already in users' carts)`,
         });
       }
     }
 
+    // ✅ Handle new images if any
     if (req.files && req.files.length > 0) {
-      let imageUrl = [];
+      const imageUrl = [];
       for (const file of req.files) {
         const result = await cloudinary.uploader.upload(file.path, { folder: "uploads" });
         imageUrl.push(result.secure_url);
@@ -89,18 +146,23 @@ export async function updateProduct(req, res) {
       updatedData.productImage = imageUrl;
     }
 
-    const updatedProduct = await products.findByIdAndUpdate(
-      id,
-      updatedData,
-      { new: true }
-    );
+    // ✅ Update the product
+    const updatedProduct = await products.findByIdAndUpdate(id, updatedData, { new: true });
 
-    res.status(200).json(updatedProduct);
+    if (!updatedProduct) {
+      return res.status(404).json({ message: "Product not found after update" });
+    }
+
+    res.status(200).json({
+      message: "Product updated successfully",
+      updatedProduct,
+    });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Failed to update product" });
+    console.error("Update product error:", err);
+    res.status(500).json({ error: err.message || "Failed to update product" });
   }
 }
+
 
 
 export async function deleteProduct(req, res) {

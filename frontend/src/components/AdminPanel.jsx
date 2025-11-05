@@ -30,7 +30,7 @@ dispatch({
   })
 
 
-  const [updatedImages, setUpdatedImages] = useState([]);
+  const [updatedImages, setUpdatedImages] = useState({});
 
   const fetchProducts = async () => {
     try {
@@ -87,19 +87,59 @@ dispatch({
     }
   };
 
+  // const handleUpdate = async (id, updatedProduct) => {
+  //   try {
+  //     const newImages = updatedImages[id] || [];
+
+  //     let res;
+  //     if (newImages.length > 0) {
+  //       const formData = new FormData();
+  //       formData.append("productName", updatedProduct.productName);
+  //       formData.append("productPrice", updatedProduct.productPrice);
+  //       formData.append("description", updatedProduct.description);
+  //       formData.append("productCategory", updatedProduct.productCategory);
+  //       formData.append("productCount", updatedProduct.productCount);
+  //       newImages.forEach((img) => img && formData.append("image", img));
+
+  //       res = await fetch(`http://localhost:3000/products/update-product/${id}`, {
+  //         method: "PUT",
+  //         body: formData,
+  //         credentials: "include"
+  //       });
+  //     } else {
+  //       res = await fetch(`http://localhost:3000/products/update-product/${id}`, {
+  //         method: "PATCH",
+  //         headers: { "Content-Type": "application/json" },
+  //         body: JSON.stringify(updatedProduct),
+  //         credentials: "include"
+  //       });
+  //     }
+
+  //     if (res.ok) {
+  //       fetchProducts();
+  //       setUpdatedImages((prev) => ({ ...prev, [id]: [] }));
+  //     } else {
+  //       alert("Failed to update product");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error updating product:", error);
+  //   }
+  // };
+
   const handleUpdate = async (id, updatedProduct) => {
     try {
-      const newImages = updatedImages[id] || [];
+      const newImages = Array.isArray(updatedImages[id]) ? updatedImages[id].filter(Boolean) : [];
 
       let res;
       if (newImages.length > 0) {
         const formData = new FormData();
-        formData.append("productName", updatedProduct.productName);
-        formData.append("productPrice", updatedProduct.productPrice);
-        formData.append("description", updatedProduct.description);
-        formData.append("productCategory", updatedProduct.productCategory);
-        formData.append("productCount", updatedProduct.productCount);
-        newImages.forEach((img) => img && formData.append("image", img));
+        formData.append("productName", updatedProduct.productName ?? "");
+        formData.append("productPrice", updatedProduct.productPrice ?? "");
+        formData.append("description", updatedProduct.description ?? "");
+        formData.append("productCategory", updatedProduct.productCategory ?? "");
+        formData.append("productCount", updatedProduct.productCount ?? 0);
+
+        newImages.forEach((img) => formData.append("image", img));
 
         res = await fetch(`http://localhost:3000/products/update-product/${id}`, {
           method: "PUT",
@@ -115,16 +155,22 @@ dispatch({
         });
       }
 
+      const body = await res.json().catch(() => ({}));
+
       if (res.ok) {
         fetchProducts();
         setUpdatedImages((prev) => ({ ...prev, [id]: [] }));
       } else {
-        alert("Failed to update product");
+        console.error("Update failed:", body);
+        alert(body.error || "Failed to update product");
       }
-    } catch (error) {
-      console.error("Error updating product:", error);
-    }
+      } catch (error) {
+        console.error("Error updating product:", error);
+        alert("Error updating product — check console");
+      }
   };
+
+
 
   const handleDelete = async (id) => {
     try {
@@ -184,13 +230,18 @@ dispatch({
                     <input
                       type="file"
                       accept="image/*"
+                      // onChange={(e) =>
+                      //   setUpdatedImages((prev) => ([
+                      //     ...prev,
+                      //   {   [p._id]: [e.target.files[0], prev[p._id]?.[0] ]},
+                      //   ]))
+                      // }
+                      // Change Image 1
                       onChange={(e) =>
-                        setUpdatedImages((prev) => ([
-
-                        
+                        setUpdatedImages((prev) => ({
                           ...prev,
-                        {   [p._id]: [e.target.files[0], prev[p._id]?.[0] ]},
-                        ]))
+                          [p._id]: [e.target.files[0], prev[p._id]?.[1] || null],
+                        }))
                       }
                     />
                   </div>
@@ -199,6 +250,13 @@ dispatch({
                     <input
                       type="file"
                       accept="image/*"
+                      // onChange={(e) =>
+                      //   setUpdatedImages((prev) => ({
+                      //     ...prev,
+                      //     [p._id]: [prev[p._id]?.[0] || null, e.target.files[0]],
+                      //   }))
+                      // }
+                      // Change Image 2
                       onChange={(e) =>
                         setUpdatedImages((prev) => ({
                           ...prev,
