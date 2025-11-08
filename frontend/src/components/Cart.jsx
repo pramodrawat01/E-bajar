@@ -31,7 +31,7 @@ export default function Cart() {
     const fetchCart = async () => {
       setLoading(true);
       try {
-        const res = await fetch("http://localhost:3000/cart/get", {
+        const res = await fetch("https://e-bajar.onrender.com/cart/get", {
           method: "GET",
           credentials: "include", //cookie 
         });
@@ -49,7 +49,7 @@ export default function Cart() {
 
   const fetchAddresses = async () => {
     try {
-      const res = await fetch("http://localhost:3000/address/get", {
+      const res = await fetch("https://e-bajar.onrender.com/address/get", {
         method: "GET",
         credentials: "include",
       });
@@ -73,7 +73,7 @@ export default function Cart() {
     setUpdating(true);
 
     try {
-      const res = await fetch("http://localhost:3000/cart/update", {
+      const res = await fetch("https://e-bajar.onrender.com/cart/update", {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
@@ -104,7 +104,7 @@ export default function Cart() {
     setSendingOtp(true);
 
     try {
-      const res = await fetch("http://localhost:3000/otp/send", {
+      const res = await fetch("https://e-bajar.onrender.com/otp/send", {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
@@ -138,7 +138,7 @@ export default function Cart() {
     setVerifyingOtp(true);
 
     try {
-      const res = await fetch("http://localhost:3000/otp/verify", {
+      const res = await fetch("https://e-bajar.onrender.com/otp/verify", {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
@@ -188,7 +188,7 @@ export default function Cart() {
     }
 
     try {
-      const res = await fetch("http://localhost:3000/address/add", {
+      const res = await fetch("https://e-bajar.onrender.com/address/add", {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
@@ -251,7 +251,7 @@ export default function Cart() {
         qty: p.qty,
       }));
 
-      const res = await fetch("http://localhost:3000/order/addOrder", {
+      const res = await fetch("https://e-bajar.onrender.com/order/addOrder", {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
@@ -284,7 +284,7 @@ export default function Cart() {
   async function handleDelAddress(delId) {
     try{
 
-      const res = await fetch(`http://localhost:3000/address/delete/${delId}`,
+      const res = await fetch(`https://e-bajar.onrender.com/address/delete/${delId}`,
         {
           method: "DELETE",
           credentials: "include",

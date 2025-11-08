@@ -34,7 +34,7 @@ dispatch({
 
   const fetchProducts = async () => {
     try {
-      const res = await fetch("http://localhost:3000/products");
+      const res = await fetch("https://e-bajar.onrender.com/products");
       const data = await res.json();
       setProducts(Array.isArray(data.products) ? data.products : []);
     } catch (error) {
@@ -64,7 +64,7 @@ dispatch({
     });
 
     try {
-      const res = await fetch("http://localhost:3000/products/add-product", {
+      const res = await fetch("https://e-bajar.onrender.com/products/add-product", {
         method: "POST",
         body: formData,
       });
@@ -101,13 +101,13 @@ dispatch({
   //       formData.append("productCount", updatedProduct.productCount);
   //       newImages.forEach((img) => img && formData.append("image", img));
 
-  //       res = await fetch(`http://localhost:3000/products/update-product/${id}`, {
+  //       res = await fetch(`https://e-bajar.onrender.com/products/update-product/${id}`, {
   //         method: "PUT",
   //         body: formData,
   //         credentials: "include"
   //       });
   //     } else {
-  //       res = await fetch(`http://localhost:3000/products/update-product/${id}`, {
+  //       res = await fetch(`https://e-bajar.onrender.com/products/update-product/${id}`, {
   //         method: "PATCH",
   //         headers: { "Content-Type": "application/json" },
   //         body: JSON.stringify(updatedProduct),
@@ -141,13 +141,13 @@ dispatch({
 
         newImages.forEach((img) => formData.append("image", img));
 
-        res = await fetch(`http://localhost:3000/products/update-product/${id}`, {
+        res = await fetch(`https://e-bajar.onrender.com/products/update-product/${id}`, {
           method: "PUT",
           body: formData,
           credentials: "include"
         });
       } else {
-        res = await fetch(`http://localhost:3000/products/update-product/${id}`, {
+        res = await fetch(`https://e-bajar.onrender.com/products/update-product/${id}`, {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(updatedProduct),
@@ -174,7 +174,7 @@ dispatch({
 
   const handleDelete = async (id) => {
     try {
-      const res = await fetch(`http://localhost:3000/products/delete-product/${id}`, {
+      const res = await fetch(`https://e-bajar.onrender.com/products/delete-product/${id}`, {
         method: "DELETE",
       });
       if (res.ok) fetchProducts();

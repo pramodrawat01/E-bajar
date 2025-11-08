@@ -25,7 +25,7 @@ const [cartt, setCart]= useState(0)
             }
           })
       try {
-        const res = await fetch("http://localhost:3000/user/getProfile", {
+        const res = await fetch("https://e-bajar.onrender.com/user/getProfile", {
           method: "GET",
           credentials: "include", // cookies ke liye
         });
