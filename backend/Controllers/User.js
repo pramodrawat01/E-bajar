@@ -79,7 +79,10 @@ export async function login(req, res) {
     let token = await jwt.sign({ id: user._id }, process.env.secret_key, {
       expiresIn: "1d",
     });
-    res.cookie("token", token)
+    res.cookie("token", token, {
+      secure : true,
+      sameSite : 'None'
+    })
       .json({
         message: "loggedin successfully ",
         isAdmin: false,
@@ -110,7 +113,7 @@ export async function getProfile(req, res) {
         .json({ message: "please login first to continue" });
     }
 
-    const decodedUser =await  jwt.verify(token, process.env.secret_key);
+    const decodedUser =  jwt.verify(token, process.env.secret_key);
 
     const user = await User.findById(decodedUser.id).select("-password");
 
@@ -129,7 +132,10 @@ export async function getProfile(req, res) {
 
 export async function logout(req, res) {
   try {
-    res.clearCookie("token");
+    res.clearCookie("token", {
+      secure : true,
+      sameSite  : "None"
+    });
 
     res.status(200).json({ message: "Logged out successfully" });
   } catch (error) {

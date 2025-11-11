@@ -69,6 +69,8 @@ dispatch({
         body: formData,
       });
 
+      const data = await res.json();
+
       if (res.ok) {
         setNewProduct({
           name: "",
@@ -80,6 +82,7 @@ dispatch({
         });
         fetchProducts();
       } else {
+        console.log(data, "add product data")
         alert("Failed to add product");
       }
     } catch (error) {
