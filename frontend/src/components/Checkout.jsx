@@ -204,6 +204,7 @@ export default function Checkout() {
       paymentMode: mode,        // online or cod
       customerNumber: customerNumber.toString(),
     }),
+    credentials : "include"
   });
 
   const data = await res.json();
