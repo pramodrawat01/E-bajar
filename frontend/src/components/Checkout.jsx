@@ -355,7 +355,7 @@ export default function Checkout() {
 
 
       <section >
-        <h3 style={headingStyle}>Delivery Address</h3>
+        <h3 >Delivery Address</h3>
         <p><strong>{selectedAddress.fullName}</strong></p>
         <p>{selectedAddress.phone}</p>
         <p>
@@ -367,7 +367,7 @@ export default function Checkout() {
 
 
       <section >
-        <h3 style={headingStyle}>Order Summary</h3>
+        <h3 >Order Summary</h3>
         {cart.products.map((p, idx) => (
           <div key={idx} style={summaryItem}>
             <p>{p.item.productName}</p>
@@ -385,8 +385,8 @@ export default function Checkout() {
 
 
       <section >
-        <h3 style={headingStyle}>Payment Mode</h3>
-        <label style={radioLabel}>
+        <h3 >Payment Mode</h3>
+        <label >
           <input
             type="radio"
             value="cod"
@@ -395,7 +395,7 @@ export default function Checkout() {
           />
           Cash on Delivery (COD)
         </label>
-        <label style={radioLabel}>
+        <label >
           <input
             type="radio"
             value="online"
@@ -408,7 +408,7 @@ export default function Checkout() {
 
 
       <section >
-        <h3 style={headingStyle}>Terms & Conditions</h3>
+        <h3 >Terms & Conditions</h3>
         <p>Beyond 7 days you can't exchange and no return possible.</p>
         <p>Your Customer Number: <strong>{customerNumber}</strong></p>
       </section>
