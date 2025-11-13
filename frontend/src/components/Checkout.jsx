@@ -369,7 +369,7 @@ export default function Checkout() {
       <section >
         <h3 >Order Summary</h3>
         {cart.products.map((p, idx) => (
-          <div key={idx} style={summaryItem}>
+          <div key={idx} >
             <p>{p.item.productName}</p>
             <p>Qty: {p.qty}</p>
             <p>₹{p.price}</p>
