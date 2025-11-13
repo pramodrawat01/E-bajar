@@ -10,6 +10,7 @@ import ContextProvider from "./Context/ContextProvider.jsx";
 import ShopCategory from "./components/ShopCategory.jsx";
 import Cart from "./components/Cart.jsx";
 import Orders from "./components/Orders.jsx";
+import Checkout from "./components/Checkout.jsx";
 
 
 
@@ -25,10 +26,10 @@ export default function App(){
             <Route path="/Shop" element={<Shop/>}/>
             <Route path="/profile" element={<Profile/>}/>
             <Route path="/admin" element={<AdminPanel/>}/>
-       <Route path="/cart" element={<Cart/>}/>
-  <Route path="/orders" element={<Orders/>}/>
-      <Route path="/shop/:category" element={<ShopCategory/>}/>
-           
+            <Route path="/cart" element={<Cart/>}/>
+            <Route path="/orders" element={<Orders/>}/>
+            <Route path="/shop/:category" element={<ShopCategory/>}/>
+            <Route path="/checkout" element={<Checkout/>}/>
         </Routes>
          </ContextProvider>
         </>
