@@ -116,57 +116,228 @@ export default function Checkout() {
     return <p style={{ textAlign: "center", marginTop: "50px" }}>⚠️ Error: Missing cart or address data.</p>;
   }
 
+  // const handlePlaceOrder = async () => {
+  //   if (!paymentMode) {
+  //     alert("Please select a payment mode.");
+  //     return;
+  //   }
+
+  //   setLoading(true);
+
+  //   try {
+
+  //       if (paymentMode === "online") {
+  //         try {
+  //           // 1. Create Razorpay Order
+  //           const res = await fetch(
+  //             "https://e-bajar.onrender.com/payment/create_order",
+  //             {
+  //               method: "POST",
+  //               headers: { "Content-Type": "application/json" },
+  //               body: JSON.stringify({
+  //                 totalAmount: cart.totalPrice + cart.totalShipping,
+  //               }),
+  //             }
+  //           );
+
+  //           const data = await res.json();
+  //           const order = data.order;
+
+  //           if (!order) {
+  //             alert("Failed to create payment order");
+  //             return;
+  //           }
+
+  //           // 2. Open Razorpay Checkout
+  //           const options = {
+  //             key: "rzp_test_Rf7yXnYt9LROEk", // <-- Replace with real key
+  //             amount: order.amount,
+  //             currency: order.currency,
+  //             name: "E-Bajar",
+  //             order_id: order.id,
+
+  //             handler: async function (response) {
+  //               // 3. VERIFY PAYMENT
+  //               const verifyRes = await fetch(
+  //                 "https://e-bajar.onrender.com/payment/verify_payment",
+  //                 {
+  //                   method: "POST",
+  //                   headers: { "Content-Type": "application/json" },
+  //                   body: JSON.stringify({
+  //                     razorpay_payment_id: response.razorpay_payment_id,
+  //                     razorpay_order_id: response.razorpay_order_id,
+  //                     razorpay_signature: response.razorpay_signature,
+  //                   }),
+  //                 }
+  //               );
+
+  //               const verifyData = await verifyRes.json();
+
+  //               if (verifyData.success) {
+  //                 alert("Payment Verified Successfully!");
+
+  //                 // Place COD type order now that payment is confirmed
+  //                 placeFinalOrder();
+  //               } else {
+  //                 alert("Payment failed verification");
+  //               }
+  //             },
+  //           };
+
+  //           const rzp = new window.Razorpay(options);
+  //           rzp.open();
+  //           return; // Stop COD flow
+  //         } catch (err) {
+  //           console.error(err);
+  //           alert("Error initiating online payment");
+  //         }
+  //       }
+
+
+
+  //     const products = cart.products.map((p) => ({
+  //       productId: p.item._id,
+  //       quantity: p.qty,
+  //       price: p.price,
+  //     }));
+
+
+  //     const res = await fetch("https://e-bajar.onrender.com/payment/create_order", {
+  //       method: "POST",
+  //       credentials: "include",
+  //       headers: { "Content-Type": "application/json" },
+  //       body: JSON.stringify({
+  //         products,
+  //         totalAmount: cart.totalPrice + cart.totalShipping,
+  //         deliveryAddress: selectedAddress,
+  //         paymentMode,
+  //         customerNumber: customerNumber.toString(),
+  //       }),
+  //     });
+
+  //     const data = await res.json();
+  //     dispatch({
+  //       type: "productAdd",
+  //       payload: { isAdding: true },
+  //     });
+
+  //     if (res.ok) {
+  //       alert(`Order placed successfully! Customer Number: ${customerNumber}`);
+  //       dispatch({
+  //         type: "set-cart",
+  //         payload: { products: [], totalPrice: 0, totalShipping: 0 },
+  //       });
+  //       navigate("/orders");
+  //     } else {
+  //       alert(data.message || "Failed to place order");
+  //     }
+  //   } catch (err) {
+  //     console.error(err);
+  //     alert("Something went wrong while placing order!");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
   const handlePlaceOrder = async () => {
-    if (!paymentMode) {
-      alert("Please select a payment mode.");
-      return;
-    }
+  if (!paymentMode) {
+    alert("Please select a payment mode.");
+    return;
+  }
 
-    setLoading(true);
+  setLoading(true);
 
-    try {
-      const products = cart.products.map((p) => ({
-        productId: p.item._id,
-        quantity: p.qty,
-        price: p.price,
-      }));
-
+  try {
+    // ⭐ ONLINE FLOW
+    if (paymentMode === "online") {
       const res = await fetch("https://e-bajar.onrender.com/payment/create_order", {
         method: "POST",
-        credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          products,
           totalAmount: cart.totalPrice + cart.totalShipping,
-          deliveryAddress: selectedAddress,
-          paymentMode,
-          customerNumber: customerNumber.toString(),
         }),
       });
 
       const data = await res.json();
-      dispatch({
-        type: "productAdd",
-        payload: { isAdding: true },
-      });
+      const order = data.order;
 
-      if (res.ok) {
-        alert(`Order placed successfully! Customer Number: ${customerNumber}`);
-        dispatch({
-          type: "set-cart",
-          payload: { products: [], totalPrice: 0, totalShipping: 0 },
-        });
-        navigate("/orders");
-      } else {
-        alert(data.message || "Failed to place order");
-      }
-    } catch (err) {
-      console.error(err);
-      alert("Something went wrong while placing order!");
-    } finally {
-      setLoading(false);
+      const options = {
+        key: "rzp_test_Rf7yXnYt9LROEk",
+        amount: order.amount,
+        currency: order.currency,
+        name: "E-Bajar",
+        order_id: order.id,
+
+        handler: async function (response) {
+          const verifyRes = await fetch("https://e-bajar.onrender.com/payment/verify_payment", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_signature: response.razorpay_signature,
+            }),
+          });
+
+          const verifyData = await verifyRes.json();
+
+          if (verifyData.success) {
+            await placeFinalOrder("online");
+          } else {
+            alert("Payment Verification Failed!");
+          }
+        },
+      };
+
+      const rzp = new window.Razorpay(options);
+      rzp.open();
+      return;
     }
-  };
+
+    // ⭐ COD FLOW
+    if (paymentMode === "cod") {
+      await placeFinalOrder("cod");
+      return;
+    }
+
+  } catch (error) {
+    console.error(error);
+    alert("Something went wrong!");
+  } finally {
+    setLoading(false);
+  }
+};
+
+
+ const placeFinalOrder = async (mode) => {
+  const products = cart.products.map((p) => ({
+    productId: p.item._id,
+    quantity: p.qty,
+    price: p.price,
+  }));
+
+  const res = await fetch("https://e-bajar.onrender.com/order/addOrder", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      products,
+      totalAmount: cart.totalPrice + cart.totalShipping,
+      deliveryAddress: selectedAddress,
+      paymentMode: mode,        // online or cod
+      customerNumber: customerNumber.toString(),
+    }),
+  });
+
+  const data = await res.json();
+
+  if (res.ok) {
+    alert("Order Placed Successfully!");
+    navigate("/orders");
+  } else {
+    alert(data.message || "Failed to place order");
+  }
+};
+
 
   return (
     <div

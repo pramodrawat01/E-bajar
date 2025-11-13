@@ -10,16 +10,19 @@ const razorpay = new Razorpay({
 
 export const createOrder = async(req, res) => {
     try {
-        const {amount} = req.body;
+        const {totalAmount} = req.body;
 
         const options = {
-            amount : amount * 100,
-            currency : "INT",
+            amount : totalAmount * 100,
+            currency : "INR",
             receipt : `receipt_${Date.now()}`,
         }
 
         const order = await razorpay.orders.create(options)
-        res.status(200).json(order)
+        res.status(200).json({
+            success : true,
+            order
+        })
     } catch (error) {
         console.error("Error creating order : ", error)
         res.status(500).json({
@@ -37,9 +40,11 @@ export const verifyPayment = async(req, res) => {
         const expectedSignature = crypto
             .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
             .update(body.toString())
-            .digest("hax");
+            .digest("hex");
 
-        if(expectedSignature === razorpay_signature){
+        const isValid = expectedSignature === razorpay_signature;
+
+        if(isValid){
             res.status(200).json({
                 success : true,
                 message : "Payment verified successfully"
